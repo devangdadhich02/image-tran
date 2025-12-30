@@ -23,7 +23,7 @@ def main():
     parser = argparse.ArgumentParser(description="DR Domain generalization", allow_abbrev=False)
     parser.add_argument("name", type=str)
     parser.add_argument("configs", nargs="*")
-    parser.add_argument("--data_dir", type=str, default="DRdir/")
+    parser.add_argument("--data_dir", type=str, default="DR/", help="Data directory (use DR/ or DR2/)")
     parser.add_argument("--dataset", type=str, default="DR")
     parser.add_argument("--algorithm", type=str, default="VAE_DG")
     parser.add_argument(

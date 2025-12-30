@@ -32,7 +32,7 @@ See `INSTALL.md` for detailed installation instructions.
 
 ```bash
 # Test on a small subset (500 images, 2000 steps)
-python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR2/
+python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR/
 ```
 
 This will:
@@ -46,7 +46,7 @@ This will:
 
 ```bash
 # Full training on complete dataset
-python train_all.py full_training --data_dir DR2/ --steps 10000
+python train_all.py full_training --data_dir DR/ --steps 10000
 ```
 
 ## Check Results

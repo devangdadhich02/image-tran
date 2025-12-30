@@ -76,7 +76,7 @@ def main():
     )
     parser.add_argument("name", type=str, help="Experiment name")
     parser.add_argument("configs", nargs="*", help="Config files")
-    parser.add_argument("--data_dir", type=str, default="DR2/", help="Data directory")
+    parser.add_argument("--data_dir", type=str, default="DR/", help="Data directory (use DR/ or DR2/)")
     parser.add_argument("--dataset", type=str, default="DR", help="Dataset name")
     parser.add_argument("--algorithm", type=str, default="VAE_DG", help="Algorithm")
     parser.add_argument(
@@ -130,7 +130,7 @@ def main():
                     print(f"\n❌ Error: Incomplete argument '{arg}'")
                     print(f"💡 Did you mean: {similar[0]}?")
                     print(f"\n📖 Example usage:")
-                    print(f"  python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR2/")
+                    print(f"  python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR/")
                     sys.exit(1)
 
     # setup hparams
@@ -147,7 +147,7 @@ def main():
         print(f"\nError parsing arguments: {e}")
         print(f"Invalid arguments: {left_argv}")
         print(f"\nExample usage:")
-        print(f"  python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR2/")
+        print(f"  python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR/")
         sys.exit(1)
 
     # setup debug

@@ -4,12 +4,12 @@
 
 ### Subset Training (Fast Testing)
 ```bash
-python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR2/
+python train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR/
 ```
 
 ### Full Training
 ```bash
-python train_all.py full_training --data_dir DR2/ --steps 10000
+python train_all.py full_training --data_dir DR/ --steps 10000
 ```
 
 ## Common Arguments
@@ -18,7 +18,7 @@ python train_all.py full_training --data_dir DR2/ --steps 10000
 |----------|-------------|---------|
 | `--subset_size` | Number of samples per environment | `--subset_size 500` |
 | `--steps` | Number of training steps | `--steps 2000` |
-| `--data_dir` | Path to data directory | `--data_dir DR2/` |
+| `--data_dir` | Path to data directory | `--data_dir DR/` (or `DR2/`) |
 | `--debug` | Enable debug mode | `--debug` |
 | `--help` | Show all options | `--help` |
 
