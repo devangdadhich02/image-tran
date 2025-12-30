@@ -1,0 +1,9 @@
+[37m[36mINFO[0m[0m 12/30 08:10:41 | Command :: train_subset.py quick_test --subset_size 500 --steps 2000 --data_dir DR2/
+Environment:
+	Python: 3.13.9
+	PyTorch: 2.9.1+cpu
+	Torchvision: 0.24.1+cpu
+	CUDA: None
+	CUDNN: None
+	NumPy: 2.2.6
+	PIL: 12.0.0

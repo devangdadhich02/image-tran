@@ -1,0 +1,29 @@
+# Default update config
+# Config order: hparams_registry -> config.yaml -> CLI
+swad: False  # True / False
+swad_kwargs:
+  n_converge: 3
+  n_tolerance: 6
+  tolerance_ratio: 0.3
+  
+test_batchsize: 128
+
+# resnet18, resnet50 
+model: resnet50
+feat_layers: stem_block
+
+# VAE-DG Loss Configuration
+# loss_multiplier_y: weight for classification loss (set to 0 if only doing reconstruction)
+loss_multiplier_y: 0.1
+# loss_multiplier_kl: base weight for KL divergence (will be annealed)
+loss_multiplier_kl: 0.0001
+
+# KL Annealing Configuration
+# KL annealing helps prevent posterior collapse by gradually increasing KL weight
+# Linear annealing: KL weight goes from 0 to loss_multiplier_kl over [kl_anneal_start, kl_anneal_end] steps
+kl_anneal_start: 0        # Step to start KL annealing (0 = start immediately)
+kl_anneal_end: 5000       # Step to reach full KL weight (recommended: 20-50% of total steps)
+kl_anneal_cyclical: False # If True, repeats annealing cycle every kl_anneal_cycle_length steps
+kl_anneal_cycle_length: 10000  # Cycle length for cyclical annealing (if enabled)
+
+

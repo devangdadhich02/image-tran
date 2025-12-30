@@ -1,0 +1,60 @@
+bhai sab chize read karle and listen this is what my client send it to me :
+
+[6:55 PM, 12/29/2025] Er.Devang_Dadhich: Isme kya hai access ka mail bheja hai allow Karna
+[6:55 PM, 12/29/2025] Rahul Singh Singh Khangarot: seeking an experienced machine learning engineer to help debug a beta - variational autoencoder (VAE). The VAE is encountering training errors, specifically in the training loop, and the model is not converging. I need help creating code for a subset of data and to implement KL annealing.
+
+Requirements:
+- Expertise in neural networks and VAEs.
+- Strong understanding of training loops in deep learning.
+- Experience with debugging training issues.
+- Proficiency in Python and frameworks like TensorFlow or PyTorch.
+
+::has progress been made? on the DR dataset?
+in teh folder called updated files
+in teh folder called updated files
+We have a β-VAE project where the model trains without runtime errors but is not converging properly in terms of reconstruction quality.
+
+Problem summary:
+
+Dataset: eye images
+
+Current issue: model reconstructs only coarse shape and color, but fails to reconstruct fine vessel structures
+
+Codebase is adapted from the authors’ GitHub of this paper: https://arxiv.org/pdf/2309.11301
+
+This is not a bug, it’s a representation & convergence issue
+
+Your tasks:
+
+Review the existing training loop and loss formulation.
+
+Diagnose KL imbalance (posterior collapse or over-regularization).
+
+Implement proper KL annealing (linear or cyclical, as suitable).
+
+Verify architecture consistency with the paper (latent size, depth).
+
+Test on a small subset of data for fast iteration.
+
+Improve reconstruction so vessel structures are clearly visible, not just shape/color.
+
+Train until stable convergence and export final trained model weights.
+
+Deliverables required by client:
+
+Fixed & optimized β-VAE training loop
+
+KL annealing implementation
+
+Subset-data training script
+
+Explanation of what was wrong and how it was fixed
+
+Final trained model weights that reconstruct images well
+
+Priority is high. Client expects visible improvement and wants to be kept in the loop with progress.
+
+I want it to reconstruct images like in this paper: https://arxiv.org/pdf/2309.11301
+
+ 
+resolve these issues and let me know  how would i  test them also and how to run them as well as make sure ki client ki sab reequipment's sahi se ho got it 
