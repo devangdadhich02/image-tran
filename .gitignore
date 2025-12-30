@@ -1,0 +1,148 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Jupyter Notebook
+*.ipynb
+*.ipynb_checkpoints
+.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Training Results and Outputs
+results/
+train_output/
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.hdf5
+checkpoints/
+runs/
+wandb/
+tensorboard_logs/
+
+# Generated Images (keep structure, ignore large image files)
+# Uncomment if you want to ignore all generated images:
+# results/**/*.png
+# results/**/*.jpg
+# results/**/*.jpeg
+# results/**/*.tif
+# results/**/*.tiff
+
+# But keep client_images structure visible (just ignore the actual large images)
+results/**/recon_final/*.png
+results/**/recon_step_*/*.png
+results/**/client_images/*.png
+results/**/client_images_intermediate/*.png
+
+# Data Directories (large datasets)
+DR/
+DR2/
+data/
+datasets/
+*.csv
+*.tsv
+
+# Logs
+*.log
+logs/
+*.out
+*.err
+log.txt
+*.LAPTOP-*
+
+# Model Weights and Exports
+exported_weights/
+*.pth
+*.pt
+*.ckpt
+model_weights/
+saved_models/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+DS_Store
+
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Configuration (if contains sensitive data)
+# config.yaml
+# config.json
+
+# Large files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# IDE specific
+*.sublime-project
+*.sublime-workspace
+
+# Project specific
+Updated Files/
+*.LAPTOP-*
+

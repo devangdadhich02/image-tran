@@ -240,7 +240,7 @@ def main():
     logger.nofmt("")
 
     n_steps = args.steps
-    checkpoint_freq = args.checkpoint_freq or dataset.CHECKPOINT_FREQ
+    checkpoint_freq = args.checkpoint_freq or getattr(temp_dataset, 'CHECKPOINT_FREQ', 200)
     logger.info(f"n_steps = {n_steps}")
     logger.info(f"checkpoint_freq = {checkpoint_freq}")
 
@@ -249,7 +249,7 @@ def main():
     logger.info(f"n_steps is updated to {org_n_steps} => {n_steps} for checkpointing")
 
     if not args.test_envs:
-        args.test_envs = [[te] for te in range(len(dataset))]
+        args.test_envs = [[te] for te in range(len(temp_dataset))]
     logger.info(f"Target test envs = {args.test_envs}")
 
     ###########################################################################
@@ -280,7 +280,7 @@ def main():
     logger.info("Algorithm: %s" % args.algorithm)
     logger.info("Dataset: %s" % args.dataset)
 
-    table = PrettyTable(["Selection"] + dataset.environments + ["Avg."])
+    table = PrettyTable(["Selection"] + temp_dataset.environments + ["Avg."])
     for key, row in results.items():
         row.append(np.mean(row))
         row = [f"{acc:.3%}" for acc in row]
