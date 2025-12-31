@@ -8,6 +8,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 import os
+from pathlib import Path
 import numpy as np
 from PIL import Image
 
@@ -139,7 +140,9 @@ class VAE_DG(Algorithm):
         return self.network.classifier(x)
 
     def save_final_reconstruction(self, batch, save_dir, max_images=8):
-        os.makedirs(save_dir, exist_ok=True)
+        # Ensure save_dir is a Path object and create directory
+        save_dir = Path(save_dir)
+        save_dir.mkdir(parents=True, exist_ok=True)
 
         # prepare batch (list of env tensors -> single batch)
         x = torch.cat(batch["x"], dim=0)[:max_images]
