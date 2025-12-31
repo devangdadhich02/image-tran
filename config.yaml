@@ -12,18 +12,17 @@ test_batchsize: 128
 model: resnet50
 feat_layers: stem_block
 
-# VAE-DG Loss Configuration - OPTIMIZED FOR VESSEL RECONSTRUCTION
-# loss_multiplier_y: weight for classification loss (set to 0 if only doing reconstruction)
-loss_multiplier_y: 0.05  # Reduced to focus on reconstruction
+# VAE-DG Loss Configuration - ORIGINAL PAPER SETTINGS (Optimized for Vessel Visibility)
+# loss_multiplier_y: weight for classification loss
+loss_multiplier_y: 0.1  # Original value from paper
 # loss_multiplier_kl: base weight for KL divergence (will be annealed)
-# LOWER value = less regularization = better detail preservation (vessels)
+# Slightly reduced for better vessel detail preservation while keeping original architecture
 loss_multiplier_kl: 0.00005  # Reduced from 0.0001 for better detail learning
 
 # KL Annealing Configuration
 # KL annealing helps prevent posterior collapse by gradually increasing KL weight
-# For vessel reconstruction: start very low, increase slowly
 kl_anneal_start: 0        # Step to start KL annealing (0 = start immediately)
-kl_anneal_end: 8000       # Longer annealing for better detail learning (slower increase)
+kl_anneal_end: 10000      # Extended annealing for better vessel learning
 kl_anneal_cyclical: False # If True, repeats annealing cycle every kl_anneal_cycle_length steps
 kl_anneal_cycle_length: 10000  # Cycle length for cyclical annealing (if enabled)
 

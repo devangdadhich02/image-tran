@@ -87,62 +87,25 @@ class ResNet_VAE(nn.Module):
         self.fc_bn5 = nn.BatchNorm1d(64 * 4 * 4)
         self.relu = nn.ReLU(inplace=True)
 
-        # Enhanced Decoder with more capacity for fine details (vessels)
-        # Start from 4x4, progressively upsample to 224x224 with more layers
+        # Original Decoder Architecture (3 layers as per paper)
+        # Simple upsampling: 4x4 -> 8x8 -> 16x16 -> 32x32 -> 64x64 -> 128x128 -> 224x224
         self.convTrans6 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=64, out_channels=128, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(128, momentum=0.01),
-            nn.ReLU(inplace=True),
-        )  # 4x4 -> 8x8
-        
-        self.convTrans6b = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=128, out_channels=128, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(128, momentum=0.01),
-            nn.ReLU(inplace=True),
-        )  # 8x8 -> 8x8 (refinement)
-        
-        self.convTrans7 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=128, out_channels=64, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(64, momentum=0.01),
-            nn.ReLU(inplace=True),
-        )  # 8x8 -> 16x16
-        
-        self.convTrans7b = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(64, momentum=0.01),
-            nn.ReLU(inplace=True),
-        )  # 16x16 -> 16x16 (refinement)
-        
-        self.convTrans8 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(32, momentum=0.01),
             nn.ReLU(inplace=True),
-        )  # 16x16 -> 32x32
+        )  # 4x4 -> 8x8
         
-        self.convTrans9 = nn.Sequential(
+        self.convTrans7 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=32, out_channels=16, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(16, momentum=0.01),
             nn.ReLU(inplace=True),
-        )  # 32x32 -> 64x64
+        )  # 8x8 -> 16x16
         
-        self.convTrans10 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=4, stride=2, padding=1),
-            nn.BatchNorm2d(8, momentum=0.01),
-            nn.ReLU(inplace=True),
-        )  # 64x64 -> 128x128
-        
-        # Final layer with refinement
-        self.convTrans11 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(8, momentum=0.01),
-            nn.ReLU(inplace=True),
-        )  # 128x128 -> 128x128 (refinement)
-        
-        self.convTrans12 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=8, out_channels=3, kernel_size=4, stride=2, padding=1),
+        self.convTrans8 = nn.Sequential(
+            nn.ConvTranspose2d(in_channels=16, out_channels=3, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(3, momentum=0.01),
             nn.Sigmoid()    # y = (y1, y2, y3) \in [0 ,1]^3
-        )  # 128x128 -> 256x256, then interpolate to 224x224
+        )  # 16x16 -> 32x32, then interpolate to 224x224
 
     def encode(self, x):
         x = self.resnet(x)  # ResNet
@@ -167,17 +130,11 @@ class ResNet_VAE(nn.Module):
     def decode(self, z):
         x = self.relu(self.fc_bn4(self.fc4(z)))
         x = self.relu(self.fc_bn5(self.fc5(x))).view(-1, 64, 4, 4)
-        # Progressive upsampling with refinement layers for fine details
+        # Original 3-layer decoder architecture
         x = self.convTrans6(x)   # 4x4 -> 8x8
-        x = self.convTrans6b(x)  # 8x8 -> 8x8 (refinement)
         x = self.convTrans7(x)   # 8x8 -> 16x16
-        x = self.convTrans7b(x)  # 16x16 -> 16x16 (refinement)
         x = self.convTrans8(x)   # 16x16 -> 32x32
-        x = self.convTrans9(x)   # 32x32 -> 64x64
-        x = self.convTrans10(x)  # 64x64 -> 128x128
-        x = self.convTrans11(x)  # 128x128 -> 128x128 (refinement for vessels)
-        x = self.convTrans12(x)  # 128x128 -> 256x256
-        # Final resize to 224x224 (minimal interpolation to preserve details)
+        # Final resize to 224x224
         x = F.interpolate(x, size=(224, 224), mode='bilinear', align_corners=False)
         return x
 
@@ -249,14 +206,9 @@ class ResNet_VAE(nn.Module):
             # Input is already in [0,1] range
             x_unnorm = x.clamp(0, 1)
         
-        # Reconstruction loss: Combined BCE + L1 for better detail preservation
-        # BCE captures overall structure, L1 preserves fine details like vessels
-        recon_loss_bce = F.binary_cross_entropy(recon_x, x_unnorm, reduction='mean')
-        recon_loss_l1 = F.l1_loss(recon_x, x_unnorm, reduction='mean')
-        
-        # Weighted combination: L1 is important for fine details (vessels)
-        # Scale to maintain similar magnitude
-        recon_loss = (recon_loss_bce * 0.7 + recon_loss_l1 * 0.3) * (x.numel() / x.size(0))
+        # Reconstruction loss: BCE only (as per original VAE paper)
+        # Standard VAE reconstruction loss
+        recon_loss = F.binary_cross_entropy(recon_x, x_unnorm, reduction='sum') / x.size(0)
         
         # KL divergence loss
         KLD = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())

@@ -209,8 +209,19 @@ class VAE_DG(Algorithm):
             recon_raw = recon_i.clamp(0, 1)                              
             recon_raw_np = recon_raw.permute(1, 2, 0).numpy()           
             recon_raw_uint8 = (recon_raw_np * 255.0).astype("uint8") 
-            recon_normed = 0.5 + (recon_i - recon_i.mean()) / recon_i.std() 
-            recon_vis = recon_normed.clamp(0, 1).permute(1, 2, 0).numpy()
+            
+            # Better normalization for vessel visibility - use percentile-based normalization
+            # This helps preserve vessel details better than mean/std normalization
+            recon_np = recon_i.permute(1, 2, 0).numpy()
+            # Clip to reasonable range and normalize
+            p2, p98 = np.percentile(recon_np, (2, 98))
+            if p98 > p2:
+                recon_normed = np.clip((recon_np - p2) / (p98 - p2 + 1e-8), 0, 1)
+            else:
+                # Fallback to mean/std if percentile range is too small
+                recon_normed = 0.5 + (recon_i - recon_i.mean()) / (recon_i.std() + 1e-8)
+                recon_normed = recon_normed.clamp(0, 1).permute(1, 2, 0).numpy()
+            recon_vis = recon_normed
 
             # convert to uint8 pixels for PNG
             orig = (x_vis * 255.0).astype("uint8")
