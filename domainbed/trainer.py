@@ -331,15 +331,28 @@ def train(test_envs, args, hparams, n_steps, checkpoint_freq, logger, writer, ta
                 )
 
             # ---- Save reconstruction images ----
+            # Save more frequently for quick image generation (every checkpoint)
             recon_save_dir = args.out_dir / f"recon_step_{step}"
             try:
                 algorithm.save_final_reconstruction(
                     batches, save_dir=recon_save_dir
                 )
+                logger.nofmt(f"[SAVE] Reconstructions saved at step {step}")
             except Exception as e:
                 logger.nofmt(
                     f"Warning: failed to save reconstruction at step {step}: {e}"
                 )
+        
+        # Also save at intermediate steps (every 100 steps) for faster image generation
+        if step % 100 == 0 and step > 0:
+            recon_save_dir = args.out_dir / f"recon_step_{step}"
+            try:
+                algorithm.save_final_reconstruction(
+                    batches, save_dir=recon_save_dir
+                )
+                logger.nofmt(f"[SAVE] Intermediate reconstructions at step {step}")
+            except Exception as e:
+                pass  # Don't log intermediate save failures
         # ==============================================================
 
 
