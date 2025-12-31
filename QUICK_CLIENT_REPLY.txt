@@ -1,0 +1,20 @@
+Hi! I've made the changes you requested:
+
+1. ✅ Classification loss disabled: Set loss_multiplier_y to 0. The model will now focus only on reconstruction (no classification component in the loss).
+
+2. ✅ KL weight increased: Changed from 0.00005 to 0.0001 for better regularization. The KL annealing still applies (starts at 0 and gradually increases).
+
+3. 📝 About new_optimizer function:
+   This function creates a new optimizer instance for the model. It:
+   - Takes model parameters as input
+   - Reads optimizer settings from config (type: adam/sgd, learning rate, weight decay)
+   - Creates and returns the optimizer (Adam, SGD, or AdamW)
+   
+   It's mainly used when cloning the algorithm - it creates a fresh optimizer for the cloned model with the same hyperparameter settings. This keeps optimizer configuration centralized.
+
+The updated config now has:
+- loss_multiplier_y: 0 (classification disabled)
+- loss_multiplier_kl: 0.0001 (increased)
+
+Ready to train with reconstruction-only focus!
+

@@ -207,8 +207,9 @@ class ResNet_VAE(nn.Module):
             x_unnorm = x.clamp(0, 1)
         
         # Reconstruction loss: BCE only (as per original VAE paper)
-        # Standard VAE reconstruction loss
-        recon_loss = F.binary_cross_entropy(recon_x, x_unnorm, reduction='sum') / x.size(0)
+        # Standard VAE reconstruction loss - use 'mean' reduction for proper per-sample loss
+        # This ensures loss scales correctly with batch size and dataset size
+        recon_loss = F.binary_cross_entropy(recon_x, x_unnorm, reduction='mean')
         
         # KL divergence loss
         KLD = -0.5 * torch.mean(1 + logvar - mu.pow(2) - logvar.exp())

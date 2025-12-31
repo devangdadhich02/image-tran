@@ -12,12 +12,12 @@ test_batchsize: 128
 model: resnet50
 feat_layers: stem_block
 
-# VAE-DG Loss Configuration - ORIGINAL PAPER SETTINGS (Optimized for Vessel Visibility)
-# loss_multiplier_y: weight for classification loss
-loss_multiplier_y: 0.1  # Original value from paper
+# VAE-DG Loss Configuration - CLIENT REQUESTED SETTINGS
+# loss_multiplier_y: weight for classification loss (set to 0 to disable classification)
+loss_multiplier_y: 0  # Disabled - focusing only on reconstruction
 # loss_multiplier_kl: base weight for KL divergence (will be annealed)
-# Slightly reduced for better vessel detail preservation while keeping original architecture
-loss_multiplier_kl: 0.00005  # Reduced from 0.0001 for better detail learning
+# Increased as per client request (was too small)
+loss_multiplier_kl: 0.0001  # Increased from 0.00005 for better regularization
 
 # KL Annealing Configuration
 # KL annealing helps prevent posterior collapse by gradually increasing KL weight

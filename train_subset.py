@@ -224,13 +224,24 @@ def main():
         def __init__(self, root):
             super().__init__(root)
             # Create subset after full dataset is loaded
+            logger.info(f"Creating subset with size {args.subset_size} per environment...")
             create_subset_dataset(self, args.subset_size, args.seed)
+            # Verify subset was created
+            for env_idx, env_dataset in enumerate(self.datasets):
+                actual_size = len(env_dataset)
+                logger.info(f"Verified: env{env_idx} now has {actual_size} samples")
     
     # Replace the dataset class (keep it replaced for training)
     vars(datasets)[args.dataset] = SubsetDatasetWrapper
     
     # Dummy call to get dataset info (will create subset)
     temp_dataset, _in_splits, _out_splits = get_dataset([0], args, hparams)
+    
+    # Verify subset sizes in splits
+    logger.info("Verifying subset sizes in train splits:")
+    for i, (env, _) in enumerate(_in_splits):
+        if i not in args.test_envs[0] if args.test_envs else []:
+            logger.info(f"  Train split env{i}: {len(env)} samples")
     
     # print dataset information
     logger.nofmt("Dataset (SUBSET):")
