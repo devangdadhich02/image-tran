@@ -210,18 +210,22 @@ class VAE_DG(Algorithm):
             recon_raw_np = recon_raw.permute(1, 2, 0).numpy()           
             recon_raw_uint8 = (recon_raw_np * 255.0).astype("uint8") 
             
-            # Better normalization for vessel visibility - use percentile-based normalization
-            # This helps preserve vessel details better than mean/std normalization
+            # Paper-quality normalization: preserve vessel contrast
+            # Use percentile-based normalization for better vessel visibility
             recon_np = recon_i.permute(1, 2, 0).numpy()
-            # Clip to reasonable range and normalize
-            p2, p98 = np.percentile(recon_np, (2, 98))
-            if p98 > p2:
-                recon_normed = np.clip((recon_np - p2) / (p98 - p2 + 1e-8), 0, 1)
+            # Percentile-based normalization (better for medical images)
+            p1, p99 = np.percentile(recon_np, (1, 99))
+            if p99 > p1:
+                recon_normed = np.clip((recon_np - p1) / (p99 - p1 + 1e-8), 0, 1)
             else:
-                # Fallback to mean/std if percentile range is too small
-                recon_normed = 0.5 + (recon_i - recon_i.mean()) / (recon_i.std() + 1e-8)
-                recon_normed = recon_normed.clamp(0, 1).permute(1, 2, 0).numpy()
-            recon_vis = recon_normed
+                # Fallback to min/max if percentile range is too small
+                recon_min = recon_np.min()
+                recon_max = recon_np.max()
+                if recon_max > recon_min:
+                    recon_normed = (recon_np - recon_min) / (recon_max - recon_min + 1e-8)
+                else:
+                    recon_normed = recon_np
+            recon_vis = np.clip(recon_normed, 0, 1)
 
             # convert to uint8 pixels for PNG
             orig = (x_vis * 255.0).astype("uint8")

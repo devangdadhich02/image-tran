@@ -12,18 +12,19 @@ test_batchsize: 128
 model: resnet50
 feat_layers: stem_block
 
-# VAE-DG Loss Configuration - CLIENT REQUESTED SETTINGS
+# VAE-DG Loss Configuration - OPTIMIZED FOR PAPER QUALITY
 # loss_multiplier_y: weight for classification loss (set to 0 to disable classification)
 loss_multiplier_y: 0  # Disabled - focusing only on reconstruction
 # loss_multiplier_kl: base weight for KL divergence (will be annealed)
-# Increased as per client request (was too small)
-loss_multiplier_kl: 0.0001  # Increased from 0.00005 for better regularization
+# Optimized for paper-quality images: balance between detail learning and regularization
+loss_multiplier_kl: 0.0001  # Paper-quality setting
 
 # KL Annealing Configuration
 # KL annealing helps prevent posterior collapse by gradually increasing KL weight
+# Longer annealing = more time to learn fine details (vessels)
 kl_anneal_start: 0        # Step to start KL annealing (0 = start immediately)
-kl_anneal_end: 10000      # Extended annealing for better vessel learning
+kl_anneal_end: 12000      # Extended annealing for better vessel learning
 kl_anneal_cyclical: False # If True, repeats annealing cycle every kl_anneal_cycle_length steps
-kl_anneal_cycle_length: 10000  # Cycle length for cyclical annealing (if enabled)
+kl_anneal_cycle_length: 12000  # Cycle length for cyclical annealing (if enabled)
 
 

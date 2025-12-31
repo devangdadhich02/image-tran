@@ -1,0 +1,11 @@
+Yes, computer is fixed! I've reverted the decoder to the exact 3-layer architecture as per the paper (matching the original implementation). 
+
+If images are still blurry with the correct architecture, it's likely due to:
+- Insufficient training steps (need 10,000+ steps, not just 2000-3000)
+- Hyperparameters (KL weight, learning rate) might need adjustment
+- Image normalization when saving/displaying
+
+I'll run training now with the correct 3-layer architecture and share the results. The architecture now exactly matches the paper, so if blur persists, it's a training/hyperparameter issue, not the architecture.
+
+Let me train and show you the images shortly.
+

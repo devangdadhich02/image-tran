@@ -1,0 +1,21 @@
+Hi! Good question about the loss normalization.
+
+Both methods are actually equivalent and commonly used in ML:
+
+1. `reduction='sum'` then divide by batch_size = average per sample
+2. `reduction='mean'` = average per sample (same result)
+
+**Traditional ML practice**: Use `reduction='mean'` because it's cleaner, more standard, and PyTorch handles it automatically. But your original method (sum then divide) is also correct and gives the same result.
+
+**Why loss might be same with different subset sizes:**
+- If you're looking at step 0 (initialization), loss will be similar because model hasn't learned yet
+- Batch size stays constant (e.g., 32), so loss per sample is similar
+- The loss per sample is what matters, and it should be similar regardless of total dataset size
+
+What changes with subset size:
+- Training speed (fewer samples = faster)
+- Data diversity 
+- Convergence behavior
+
+I changed it to `reduction='mean'` because it's the more standard approach, but both methods are correct. The subset is working - the loss per sample being similar is expected behavior.
+

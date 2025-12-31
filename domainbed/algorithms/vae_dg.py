@@ -88,7 +88,7 @@ class ResNet_VAE(nn.Module):
         self.relu = nn.ReLU(inplace=True)
 
         # Original Decoder Architecture (3 layers as per paper)
-        # Simple upsampling: 4x4 -> 8x8 -> 16x16 -> 32x32 -> 64x64 -> 128x128 -> 224x224
+        # Paper architecture: 4x4 -> 8x8 -> 16x16 -> 32x32 -> interpolate to 224x224
         self.convTrans6 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(32, momentum=0.01),
@@ -130,11 +130,11 @@ class ResNet_VAE(nn.Module):
     def decode(self, z):
         x = self.relu(self.fc_bn4(self.fc4(z)))
         x = self.relu(self.fc_bn5(self.fc5(x))).view(-1, 64, 4, 4)
-        # Original 3-layer decoder architecture
+        # Original 3-layer decoder architecture (as per paper)
         x = self.convTrans6(x)   # 4x4 -> 8x8
         x = self.convTrans7(x)   # 8x8 -> 16x16
         x = self.convTrans8(x)   # 16x16 -> 32x32
-        # Final resize to 224x224
+        # Interpolate to 224x224 (as per paper)
         x = F.interpolate(x, size=(224, 224), mode='bilinear', align_corners=False)
         return x
 
