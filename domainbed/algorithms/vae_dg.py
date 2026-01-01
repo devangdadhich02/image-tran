@@ -87,8 +87,10 @@ class ResNet_VAE(nn.Module):
         self.fc_bn5 = nn.BatchNorm1d(64 * 4 * 4)
         self.relu = nn.ReLU(inplace=True)
 
-        # Original Decoder Architecture (3 layers as per paper)
-        # Paper architecture: 4x4 -> 8x8 -> 16x16 -> 32x32 -> interpolate to 224x224
+        # Decoder Architecture - Progressive upsampling to reduce blur
+        # Original paper uses 3 layers, but 7x interpolation (32x32->224x224) causes blur
+        # Solution: Add 2 more upsampling layers to reduce interpolation to 1.75x
+        # Architecture: 4x4 -> 8x8 -> 16x16 -> 32x32 -> 64x64 -> 128x128 -> interpolate 1.75x to 224x224
         self.convTrans6 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(32, momentum=0.01),
@@ -102,10 +104,22 @@ class ResNet_VAE(nn.Module):
         )  # 8x8 -> 16x16
         
         self.convTrans8 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=16, out_channels=3, kernel_size=4, stride=2, padding=1),
+            nn.ConvTranspose2d(in_channels=16, out_channels=8, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(8, momentum=0.01),
+            nn.ReLU(inplace=True),
+        )  # 16x16 -> 32x32
+        
+        self.convTrans9 = nn.Sequential(
+            nn.ConvTranspose2d(in_channels=8, out_channels=4, kernel_size=4, stride=2, padding=1),
+            nn.BatchNorm2d(4, momentum=0.01),
+            nn.ReLU(inplace=True),
+        )  # 32x32 -> 64x64
+        
+        self.convTrans10 = nn.Sequential(
+            nn.ConvTranspose2d(in_channels=4, out_channels=3, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(3, momentum=0.01),
             nn.Sigmoid()    # y = (y1, y2, y3) \in [0 ,1]^3
-        )  # 16x16 -> 32x32, then interpolate to 224x224
+        )  # 64x64 -> 128x128, then minimal interpolation (1.75x) to 224x224
 
     def encode(self, x):
         x = self.resnet(x)  # ResNet
@@ -130,11 +144,13 @@ class ResNet_VAE(nn.Module):
     def decode(self, z):
         x = self.relu(self.fc_bn4(self.fc4(z)))
         x = self.relu(self.fc_bn5(self.fc5(x))).view(-1, 64, 4, 4)
-        # Original 3-layer decoder architecture (as per paper)
+        # Progressive upsampling to reduce blur (instead of 7x interpolation)
         x = self.convTrans6(x)   # 4x4 -> 8x8
         x = self.convTrans7(x)   # 8x8 -> 16x16
         x = self.convTrans8(x)   # 16x16 -> 32x32
-        # Interpolate to 224x224 (as per paper)
+        x = self.convTrans9(x)   # 32x32 -> 64x64
+        x = self.convTrans10(x)  # 64x64 -> 128x128
+        # Minimal interpolation (1.75x) instead of 7x - much less blur!
         x = F.interpolate(x, size=(224, 224), mode='bilinear', align_corners=False)
         return x
 
